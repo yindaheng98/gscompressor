@@ -16,12 +16,12 @@ class VectorQuantizationCompressor:
         encoder_executable: str = "./build-reduced/Release/draco_encoder.exe" if platform.system() == "Windows" else "./build-reduced/draco_encoder",
         decoder_executable: str = "./build-reduced/Release/draco_decoder.exe" if platform.system() == "Windows" else "./build-reduced/draco_decoder",
         compression_level: int = 0,
-        qposition=16,
-        qscale=16,
-        qrotation=16,
-        qopacity=16,
-        qfeaturedc=16,
-        qfeaturesrest=16,
+        qposition=30,
+        qscale=30,
+        qrotation=30,
+        qopacity=30,
+        qfeaturedc=30,
+        qfeaturesrest=30,
     ):
         self.quantizer = quantizer
         self.encoder_executable = encoder_executable

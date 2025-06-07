@@ -11,12 +11,12 @@ class Compressor:
         self, model: GaussianModel,
         encoder_executable: str = "./build-vanilla/Release/draco_encoder.exe" if platform.system() == "Windows" else "./build-vanilla/draco_encoder",
         compression_level: int = 0,
-        qposition=16,
-        qscale=16,
-        qrotation=16,
-        qopacity=16,
-        qfeaturedc=16,
-        qfeaturesrest=16,
+        qposition=30,
+        qscale=30,
+        qrotation=30,
+        qopacity=30,
+        qfeaturedc=30,
+        qfeaturesrest=30,
     ):
         self._model = model
         self.encoder_executable = encoder_executable

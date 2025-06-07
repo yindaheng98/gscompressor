@@ -13,12 +13,12 @@ def compress(
         save_drc: str,
         encoder_executable: str,
         compression_level=0,
-        qposition=16,
-        qscale=16,
-        qrotation=16,
-        qopacity=16,
-        qfeaturedc=16,
-        qfeaturesrest=16,
+        qposition=30,
+        qscale=30,
+        qrotation=30,
+        qopacity=30,
+        qfeaturedc=30,
+        qfeaturesrest=30,
         **kwargs
 ):
     gaussians = GaussianModel(sh_degree)
@@ -63,12 +63,12 @@ if __name__ == "__main__":
     parser = subparsers.add_parser("compress")
     parser.add_argument("--encoder_executable", default="./build-reduced/Release/draco_encoder.exe" if platform.system() == "Windows" else "./build-reduced/draco_encoder", type=str)
     parser.add_argument("--compression_level", default=0, type=int)
-    parser.add_argument("--qposition", default=16, type=int)
-    parser.add_argument("--qscale", default=16, type=int)
-    parser.add_argument("--qrotation", default=16, type=int)
-    parser.add_argument("--qopacity", default=16, type=int)
-    parser.add_argument("--qfeaturedc", default=16, type=int)
-    parser.add_argument("--qfeaturesrest", default=16, type=int)
+    parser.add_argument("--qposition", default=30, type=int)
+    parser.add_argument("--qscale", default=30, type=int)
+    parser.add_argument("--qrotation", default=30, type=int)
+    parser.add_argument("--qopacity", default=30, type=int)
+    parser.add_argument("--qfeaturedc", default=30, type=int)
+    parser.add_argument("--qfeaturesrest", default=30, type=int)
     parser.add_argument("--num_clusters", type=int, default=256)
     parser.add_argument("--num_clusters_rotation_re", type=int, default=None)
     parser.add_argument("--num_clusters_rotation_im", type=int, default=None)
