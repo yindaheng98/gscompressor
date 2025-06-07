@@ -10,7 +10,6 @@ class Compressor:
     def __init__(
         self, model: GaussianModel,
         encoder_executable: str = "./build-vanilla/Release/draco_encoder.exe" if platform.system() == "Windows" else "./build-vanilla/draco_encoder",
-        decoder_executable: str = "./build-vanilla/Release/draco_decoder.exe" if platform.system() == "Windows" else "./build-vanilla/draco_decoder",
         compression_level: int = 0,
         qposition=16,
         qscale=16,
@@ -21,7 +20,6 @@ class Compressor:
     ):
         self._model = model
         self.encoder_executable = encoder_executable
-        self.decoder_executable = decoder_executable
         self.compression_level = compression_level
         self.qposition = qposition
         self.qscale = qscale
@@ -46,6 +44,15 @@ class Compressor:
                 "-qfeaturedc", str(self.qfeaturedc),
                 "-qfeaturerest", str(self.qfeaturesrest),
             ])
+
+
+class Decompressor:
+    def __init__(
+        self, model: GaussianModel,
+        decoder_executable: str = "./build-vanilla/Release/draco_decoder.exe" if platform.system() == "Windows" else "./build-vanilla/draco_decoder",
+    ):
+        self._model = model
+        self.decoder_executable = decoder_executable
 
     def load_compressed(self, path: str):
         with tempfile.TemporaryDirectory() as temp_dir:

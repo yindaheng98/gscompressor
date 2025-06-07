@@ -1,1 +1,1 @@
-from .compressor import Compressor
+from .compressor import Compressor, Decompressor

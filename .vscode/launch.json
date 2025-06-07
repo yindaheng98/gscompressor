@@ -14,7 +14,7 @@
                 "-d",
                 "output/truck-gscompress",
                 "-i",
-                "10000",
+                "30000",
                 "compress"
             ]
         },
@@ -31,7 +31,7 @@
                 "-d",
                 "output/truck-gscompress",
                 "-i",
-                "10000",
+                "30000",
                 "decompress"
             ]
         },
