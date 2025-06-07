@@ -1,4 +1,9 @@
 build-*
+/gaussian_splatting
+/reduced_3dgs
+data
+output
+*.dist-info
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
