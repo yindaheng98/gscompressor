@@ -15,6 +15,24 @@
                 "output/truck-gscompress",
                 "-i",
                 "10000",
+                "compress"
+            ]
+        },
+        {
+            "name": "decompress",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "gscompressor.compress",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "-s",
+                "output/truck",
+                "-d",
+                "output/truck-gscompress",
+                "-i",
+                "10000",
+                "decompress"
             ]
         },
     ]

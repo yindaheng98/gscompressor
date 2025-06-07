@@ -42,9 +42,11 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--source", required=True, type=str)
     parser.add_argument("-d", "--destination", required=True, type=str)
     parser.add_argument("-i", "--iteration", required=True, type=int)
-    parser.add_argument("--load_camera", default=None, type=str)
     parser.add_argument("--encoder_executable", default="./build-vanilla/Release/draco_encoder.exe" if platform.system() == "Windows" else "./build-vanilla/draco_encoder", type=str)
     parser.add_argument("--decoder_executable", default="./build-vanilla/Release/draco_decoder.exe" if platform.system() == "Windows" else "./build-vanilla/draco_decoder", type=str)
+    subparsers = parser.add_subparsers(dest="mode", required=True)
+    rootparser = parser
+    parser = subparsers.add_parser("compress")
     parser.add_argument("--compression_level", default=0, type=int)
     parser.add_argument("--qposition", default=16, type=int)
     parser.add_argument("--qscale", default=16, type=int)
@@ -52,22 +54,28 @@ if __name__ == "__main__":
     parser.add_argument("--qopacity", default=16, type=int)
     parser.add_argument("--qfeaturedc", default=16, type=int)
     parser.add_argument("--qfeaturesrest", default=16, type=int)
-    args = parser.parse_args()
-    load_ply = os.path.join(args.source, "point_cloud", "iteration_" + str(args.iteration), "point_cloud.ply")
+    parser = subparsers.add_parser("decompress")
+    args = rootparser.parse_args()
     save_ply = os.path.join(args.destination, "point_cloud", "iteration_" + str(args.iteration), "point_cloud.drc")
     with torch.no_grad():
-        compress(
-            sh_degree=args.sh_degree,
-            load_ply=load_ply,
-            save_ply=save_ply,
-            encoder_executable=args.encoder_executable,
-            decoder_executable=args.decoder_executable,
-            compression_level=args.compression_level,
-            qposition=args.qposition,
-            qscale=args.qscale,
-            qrotation=args.qrotation,
-            qopacity=args.qopacity,
-            qfeaturedc=args.qfeaturedc,
-            qfeaturesrest=args.qfeaturesrest
-        )
-        # Save the compressed model
+        match args.mode:
+            case "compress":
+                compress(
+                    sh_degree=args.sh_degree,
+                    load_ply=os.path.join(args.source, "point_cloud", "iteration_" + str(args.iteration), "point_cloud.ply"),
+                    save_ply=save_ply,
+                    encoder_executable=args.encoder_executable,
+                    decoder_executable=args.decoder_executable,
+                    compression_level=args.compression_level,
+                    qposition=args.qposition,
+                    qscale=args.qscale,
+                    qrotation=args.qrotation,
+                    qopacity=args.qopacity,
+                    qfeaturedc=args.qfeaturedc,
+                    qfeaturesrest=args.qfeaturesrest
+                )
+                # Save the compressed model
+            case "decompress":
+                pass
+            case _:
+                raise ValueError(f"Unknown mode: {args.mode}")
