@@ -1,0 +1,8 @@
+[submodule "submodules/draco3dgs"]
+	path = submodules/draco3dgs
+	url = https://github.com/yindaheng98/draco3dgs
+	branch = main
+[submodule "submodules/dracoreduced3dgs"]
+	path = submodules/dracoreduced3dgs
+	url = https://github.com/yindaheng98/draco3dgs
+	branch = reduced3dgs
