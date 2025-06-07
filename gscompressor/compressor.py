@@ -48,8 +48,8 @@ class Compressor:
             ])
 
     def load_compressed(self, path: str):
-        with tempfile.NamedTemporaryFile(suffix='.ply') as temp_ply:
-            ply_path = temp_ply.name
+        with tempfile.TemporaryDirectory() as temp_dir:
+            ply_path = os.path.join(temp_dir, "point_cloud.ply")
             subprocess.check_call([
                 self.decoder_executable,
                 "-i", path, "-o", ply_path,
