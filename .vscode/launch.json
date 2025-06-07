@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "compress",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "gscompressor.compress",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "-s",
+                "output/truck",
+                "-d",
+                "output/truck-gscompress",
+                "-i",
+                "10000",
+            ]
+        },
+    ]
+}
