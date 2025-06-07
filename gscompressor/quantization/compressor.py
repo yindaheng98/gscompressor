@@ -4,6 +4,7 @@ import subprocess
 import tempfile
 from plyfile import PlyData, PlyElement
 import numpy as np
+import torch
 from gaussian_splatting import GaussianModel
 from reduced_3dgs.quantization import VectorQuantizer
 
@@ -74,8 +75,10 @@ class VectorQuantizationCompressor:
                 "-i", path, "-o", ply_path
             ])
             plydata = PlyData.read(ply_path)
-        ids_dict = self.quantizer.parse_ids(plydata, model.max_sh_degree, model._xyz.device)
-        codebook_dict = np.load(os.path.splitext(path)[0] + ".codebook.npz")
-        xyz = self.quantizer.parse_xyz(plydata, model._xyz.device)
-        self._codebook_dict = codebook_dict
-        return self.quantizer.dequantize(model, ids_dict, codebook_dict, xyz=xyz, replace=True)
+            ids_dict = self.quantizer.parse_ids(plydata, model.max_sh_degree, model._xyz.device)
+            kwargs = dict(dtype=torch.float32, device=model._xyz.device)
+            codebook_dict = {name: torch.tensor(array, **kwargs) for name, array in np.load(os.path.splitext(path)[0] + ".codebook.npz").items()}
+            xyz = self.quantizer.parse_xyz(plydata, model._xyz.device)
+            self._codebook_dict = codebook_dict
+            del plydata
+            return self.quantizer.dequantize(model, ids_dict, codebook_dict, xyz=xyz, replace=True)

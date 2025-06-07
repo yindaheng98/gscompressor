@@ -47,7 +47,7 @@ def decompress(
     compressor = VectorQuantizationCompressor(
         VectorQuantizer(),
         decoder_executable=decoder_executable)
-    compressor.load_compressed(load_drc)
+    compressor.load_compressed(gaussians, load_drc)
     gaussians.save_ply(save_ply)
 
 
