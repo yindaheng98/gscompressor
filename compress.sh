@@ -1,5 +1,5 @@
 #!/bin/bash
-QP=18
+QP=16
 compress() {
     python -m gscompressor.compress \
         -s output/$1/$3 -d output/$2/$3 -i $4 \
@@ -41,9 +41,9 @@ VQARGS="
 quantize truck truck-gscompress vq 30000
 VQARGS="
     --num_clusters_scaling=512 \
-    --num_clusters_rotation_re=64 \
+    --num_clusters_rotation_re=32 \
     --num_clusters_rotation_im=512 \
     --num_clusters_opacity=4 \
-    --num_clusters_features_dc=8 \
-    --num_clusters_features_rest 4 2 2"
+    --num_clusters_features_dc=4 \
+    --num_clusters_features_rest 2 2 2"
 quantize truck truck-gscompress vqlow 30000
