@@ -35,5 +35,48 @@
                 "decompress"
             ]
         },
+        {
+            "name": "quantize",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "gscompressor.quantize",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "-s",
+                "output/truck",
+                "-d",
+                "output/truck-gscompress",
+                "-i",
+                "30000",
+                "compress",
+                "--num_clusters_scaling=1024",
+                "--num_clusters_rotation_re=256",
+                "--num_clusters_rotation_im=1024",
+                "--num_clusters_opacity=256",
+                "--num_clusters_features_dc=512",
+                "--num_clusters_features_rest",
+                "256",
+                "128",
+                "64"
+            ]
+        },
+        {
+            "name": "dequantize",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "gscompressor.quantize",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "-s",
+                "output/truck",
+                "-d",
+                "output/truck-gscompress",
+                "-i",
+                "30000",
+                "decompress"
+            ]
+        },
     ]
 }
