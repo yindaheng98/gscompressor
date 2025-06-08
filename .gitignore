@@ -1,6 +1,10 @@
 build-*
 /gaussian_splatting
 /reduced_3dgs
+/gscompressor/draco/draco_encoder*
+/gscompressor/draco/draco_decoder*
+/gscompressor/quantization/draco/draco_encoder*
+/gscompressor/quantization/draco/draco_decoder*
 data
 output
 *.dist-info

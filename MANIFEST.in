@@ -1,0 +1,8 @@
+include gscompressor/draco/draco_encoder
+include gscompressor/draco/draco_encoder.exe
+include gscompressor/draco/draco_decoder
+include gscompressor/draco/draco_decoder.exe
+include gscompressor/quantization/draco/draco_encoder
+include gscompressor/quantization/draco/draco_encoder.exe
+include gscompressor/quantization/draco/draco_decoder
+include gscompressor/quantization/draco/draco_decoder.exe
