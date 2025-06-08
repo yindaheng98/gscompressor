@@ -22,6 +22,16 @@ Alternatively, install the latest version from the source:
 pip install --upgrade git+https://github.com/yindaheng98/reduced-3dgs.git@main
 ```
 
+(Optional) Install [`lapis-gs`](https://github.com/yindaheng98/lapis-gs).
+You can download the wheel from [PyPI](https://pypi.org/project/lapis-gs/):
+```shell
+pip install --upgrade lapis-gs
+```
+Alternatively, install the latest version from the source:
+```sh
+pip install --upgrade git+https://github.com/yindaheng98/lapis-gs.git@main
+```
+
 ```shell
 git clone --recursive https://github.com/yindaheng98/gscompressor
 cd gscompressor
@@ -33,6 +43,7 @@ pip install --target . --upgrade --no-deps .
 ```sh
 pip install --target . --no-deps --upgrade git+https://github.com/yindaheng98/gaussian-splatting.git@master
 pip install --target . --no-deps --upgrade git+https://github.com/yindaheng98/reduced-3dgs.git@main
+pip install --target . --no-deps --upgrade git+https://github.com/yindaheng98/lapis-gs.git@main # Optional
 ```
 
 ## Build
