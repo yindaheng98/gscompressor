@@ -8,13 +8,16 @@ import torch
 from gaussian_splatting import GaussianModel
 from reduced_3dgs.quantization import VectorQuantizer
 
+default_encoder_executable = os.path.join(os.path.dirname(__file__), "draco_encoder") + (".exe" if platform.system() == "Windows" else "")
+default_decoder_executable = os.path.join(os.path.dirname(__file__), "draco_decoder") + (".exe" if platform.system() == "Windows" else "")
+
 
 class VectorQuantizationCompressor:
     def __init__(
         self,
         quantizer: VectorQuantizer,
-        encoder_executable: str = "./build-reduced/Release/draco_encoder.exe" if platform.system() == "Windows" else "./build-reduced/draco_encoder",
-        decoder_executable: str = "./build-reduced/Release/draco_decoder.exe" if platform.system() == "Windows" else "./build-reduced/draco_decoder",
+        encoder_executable: str = None,
+        decoder_executable: str = None,
         compression_level: int = 0,
         qposition=30,
         qscale=30,
@@ -24,6 +27,10 @@ class VectorQuantizationCompressor:
         qfeaturesrest=30,
     ):
         self.quantizer = quantizer
+        if encoder_executable is None:
+            encoder_executable = default_encoder_executable
+        if decoder_executable is None:
+            decoder_executable = default_decoder_executable
         self.encoder_executable = encoder_executable
         self.decoder_executable = decoder_executable
         self.compression_level = compression_level

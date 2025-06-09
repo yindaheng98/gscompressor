@@ -61,7 +61,7 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(dest="mode", required=True)
     rootparser = parser
     parser = subparsers.add_parser("compress")
-    parser.add_argument("--encoder_executable", default="./build-reduced/Release/draco_encoder.exe" if platform.system() == "Windows" else "./build-reduced/draco_encoder", type=str)
+    parser.add_argument("--encoder_executable", default=None, type=str)
     parser.add_argument("--compression_level", default=0, type=int)
     parser.add_argument("--qposition", default=30, type=int)
     parser.add_argument("--qscale", default=30, type=int)
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_clusters_features_dc", type=int, default=None)
     parser.add_argument("--num_clusters_features_rest", nargs="+", type=int, default=[])
     parser = subparsers.add_parser("decompress")
-    parser.add_argument("--decoder_executable", default="./build-reduced/Release/draco_decoder.exe" if platform.system() == "Windows" else "./build-reduced/draco_decoder", type=str)
+    parser.add_argument("--decoder_executable", default=None, type=str)
     args = rootparser.parse_args()
     save_drc = os.path.join(args.destination, "point_cloud", "iteration_" + str(args.iteration), "point_cloud.drc")
     with torch.no_grad():

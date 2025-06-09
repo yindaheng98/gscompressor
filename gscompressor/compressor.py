@@ -5,11 +5,14 @@ import subprocess
 
 from gaussian_splatting import GaussianModel
 
+default_encoder_executable = os.path.join(os.path.dirname(__file__), "draco_encoder") + (".exe" if platform.system() == "Windows" else "")
+default_decoder_executable = os.path.join(os.path.dirname(__file__), "draco_decoder") + (".exe" if platform.system() == "Windows" else "")
+
 
 class Compressor:
     def __init__(
         self, model: GaussianModel,
-        encoder_executable: str = "./build-vanilla/Release/draco_encoder.exe" if platform.system() == "Windows" else "./build-vanilla/draco_encoder",
+        encoder_executable: str = None,
         compression_level: int = 0,
         qposition=30,
         qscale=30,
@@ -19,6 +22,8 @@ class Compressor:
         qfeaturesrest=30,
     ):
         self._model = model
+        if encoder_executable is None:
+            encoder_executable = default_encoder_executable
         self.encoder_executable = encoder_executable
         self.compression_level = compression_level
         self.qposition = qposition
@@ -49,9 +54,11 @@ class Compressor:
 class Decompressor:
     def __init__(
         self, model: GaussianModel,
-        decoder_executable: str = "./build-vanilla/Release/draco_decoder.exe" if platform.system() == "Windows" else "./build-vanilla/draco_decoder",
+        decoder_executable: str = None,
     ):
         self._model = model
+        if decoder_executable is None:
+            decoder_executable = default_decoder_executable
         self.decoder_executable = decoder_executable
 
     def load_compressed(self, path: str):

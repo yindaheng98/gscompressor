@@ -1,6 +1,7 @@
 build-*
 /gaussian_splatting
 /reduced_3dgs
+/lapisgs
 /gscompressor/draco_encoder*
 /gscompressor/draco_decoder*
 /gscompressor/quantization/draco_encoder*
