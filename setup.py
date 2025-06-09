@@ -7,14 +7,23 @@ from setuptools.command.build_ext import build_ext
 
 
 class CMakeExtension(Extension):
-    def __init__(self, name: str, sourcedir: str) -> None:
+    def __init__(self, name: str, sourcedir: str, target: str) -> None:
         super().__init__(name, sources=[])
         self.sourcedir = sourcedir
+        self.target = target
 
 
 class CMakeBuild(build_ext):
+    def get_ext_filename(self, ext_name):
+        # This extension is built to be a command-line tool, not a Python module,
+        # so we return an empty string to avoid creating a Python module file.
+        ext_name = ext_name.replace('.', os.sep)
+        if platform.system() == "Windows":
+            return ext_name + ".exe"
+        return ext_name
+
     def build_extension(self, ext: CMakeExtension) -> None:
-        build_temp = os.path.join(os.path.dirname(__file__), "build", ext.name)
+        build_temp = os.path.join(os.path.dirname(__file__), "build", ext.sourcedir)
         os.makedirs(build_temp, exist_ok=True)
         sourcedir = os.path.abspath(ext.sourcedir)
         cmake_args = [
@@ -25,27 +34,21 @@ class CMakeBuild(build_ext):
         )
         build_args = ["--config=Release"]
         subprocess.check_call(
-            ["cmake", "--build", ".", "--target=draco_encoder", *build_args], cwd=build_temp,
+            ["cmake", "--build", ".", f"--target={ext.target}", *build_args], cwd=build_temp,
         )
-        subprocess.check_call(
-            ["cmake", "--build", ".", "--target=draco_decoder", *build_args], cwd=build_temp,
-        )
-        dst = os.path.join(os.path.dirname(__file__), "gscompressor", ext.name)
+        libpath = self.get_finalized_command('build_py').build_lib
+        dst = os.path.join(libpath, os.path.dirname(self.get_ext_filename(ext.name)))
+        print(f"Copying {ext.target} to {dst}")
         os.makedirs(dst, exist_ok=True)
         if platform.system() == "Windows":
-            encoder_src = os.path.join(build_temp, "Release", "draco_encoder.exe")
-            decoder_src = os.path.join(build_temp, "Release", "draco_decoder.exe")
-            encoder_dst = os.path.join(dst, "draco_encoder.exe")
-            decoder_dst = os.path.join(dst, "draco_decoder.exe")
+            src = os.path.join(build_temp, "Release", f"{ext.target}.exe")
+            dst = os.path.join(dst, f"{ext.target}.exe")
         else:
-            encoder_src = os.path.join(build_temp, "draco_encoder")
-            decoder_src = os.path.join(build_temp, "draco_decoder")
-            encoder_dst = os.path.join(dst, "draco_encoder")
-            decoder_dst = os.path.join(dst, "draco_decoder")
+            src = os.path.join(build_temp, ext.target)
+            dst = os.path.join(dst, ext.target)
 
         # Copy with error checking
-        shutil.copy2(encoder_src, encoder_dst)
-        shutil.copy2(decoder_src, decoder_dst)
+        shutil.copy2(src, dst)
 
         # shutil.rmtree(build_temp, ignore_errors=True)
 
@@ -72,8 +75,10 @@ setup(
         'gscompressor': 'gscompressor',
     },
     ext_modules=[
-        CMakeExtension("draco", sourcedir="submodules/draco3dgs"),
-        CMakeExtension("quantization/draco", sourcedir="submodules/dracoreduced3dgs"),
+        CMakeExtension("gscompressor.draco_encoder", sourcedir="submodules/draco3dgs", target="draco_encoder"),
+        CMakeExtension("gscompressor.draco_decoder", sourcedir="submodules/draco3dgs", target="draco_decoder"),
+        CMakeExtension("gscompressor.quantization.draco_encoder", sourcedir="submodules/dracoreduced3dgs", target="draco_encoder"),
+        CMakeExtension("gscompressor.quantization.draco_decoder", sourcedir="submodules/dracoreduced3dgs", target="draco_decoder"),
     ],
     cmdclass={"build_ext": CMakeBuild},
     include_package_data=True,
