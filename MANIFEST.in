@@ -7,5 +7,3 @@ include gscompressor/quantization/draco_encoder
 include gscompressor/quantization/draco_encoder.exe
 include gscompressor/quantization/draco_decoder
 include gscompressor/quantization/draco_decoder.exe
-recursive-include submodules/draco3dgs *.*
-recursive-include submodules/dracoreduced3dgs *.*
