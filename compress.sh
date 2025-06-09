@@ -32,18 +32,10 @@ quantize() {
         --rescale_factor 1.0
 }
 VQARGS="
-    --num_clusters_scaling=8192 \
-    --num_clusters_rotation_re=2048 \
-    --num_clusters_rotation_im=8192 \
-    --num_clusters_opacity=2048 \
-    --num_clusters_features_dc=8192 \
-    --num_clusters_features_rest 8192 4096 2048"
-quantize truck truck-gscompress vq 30000
-VQARGS="
     --num_clusters_scaling=512 \
-    --num_clusters_rotation_re=32 \
+    --num_clusters_rotation_re=64 \
     --num_clusters_rotation_im=512 \
     --num_clusters_opacity=4 \
     --num_clusters_features_dc=4 \
     --num_clusters_features_rest 2 2 2"
-quantize truck truck-gscompress vqlow 30000
+quantize truck truck-gscompress vq 30000
