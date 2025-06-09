@@ -1,5 +1,5 @@
 #!/bin/bash
-QP=16
+QP=30
 compress() {
     python -m gscompressor.compress \
         -s output/$1/$3 -d output/$2/$3 -i $4 \
@@ -7,7 +7,7 @@ compress() {
     python -m gscompressor.compress \
         -s output/$1/$3 -d output/$2/$3 -i $4 \
         decompress
-    python -m lapisgs.render \
+    python -m lapisgs.render --mode camera \
         -s data/$1 -d output/$2/$3 -i $4 \
         --load_camera output/$2/$3/cameras.json \
         --rescale_factor 1.0
@@ -26,16 +26,16 @@ quantize() {
     python -m gscompressor.quantize \
         -s output/$1/1x -d output/$2/$3 -i $4 \
         decompress
-    python -m lapisgs.render \
+    python -m lapisgs.render --mode camera \
         -s data/$1 -d output/$2/$3 -i $4 \
         --load_camera output/$2/$3/cameras.json \
         --rescale_factor 1.0
 }
 VQARGS="
-    --num_clusters_scaling=512 \
-    --num_clusters_rotation_re=64 \
-    --num_clusters_rotation_im=512 \
-    --num_clusters_opacity=4 \
-    --num_clusters_features_dc=4 \
-    --num_clusters_features_rest 2 2 2"
+    --num_clusters_scaling=2048 \
+    --num_clusters_rotation_re=512 \
+    --num_clusters_rotation_im=4096 \
+    --num_clusters_opacity=256 \
+    --num_clusters_features_dc=8 \
+    --num_clusters_features_rest 4 2 2"
 quantize truck truck-gscompress vq 30000
