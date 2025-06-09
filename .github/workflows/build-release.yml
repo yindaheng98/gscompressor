@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, macos-latest]
         python-version: ["3.10", "3.11", "3.12"]
 
     steps:
@@ -35,5 +35,4 @@ jobs:
       - name: Upload
         env:
           PIP_API_TOKEN: ${{ secrets.PIP_API_TOKEN }}
-        run: |
-          python -m twine upload dist/* --username __token__ --password ${PIP_API_TOKEN} --skip-existing
+        run: python -m twine upload dist/* --username __token__ --password ${PIP_API_TOKEN} --skip-existing

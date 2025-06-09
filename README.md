@@ -1,5 +1,13 @@
 # gscompressor: compress 3DGS scenes by Draco
 
+## Install (PyPI)
+
+```shell
+pip install gscompressor
+```
+
+(No Linux version because not supported by PyPI: [Binary wheel can't be uploaded on pypi using twine](https://stackoverflow.com/questions/59451069/binary-wheel-cant-be-uploaded-on-pypi-using-twine))
+
 ## Install (Development)
 
 Install [`gaussian-splatting`](https://github.com/yindaheng98/gaussian-splatting).
