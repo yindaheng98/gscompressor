@@ -32,9 +32,9 @@ class CMakeBuild(build_ext):
         subprocess.check_call(
             ["cmake", sourcedir, *cmake_args], cwd=build_temp
         )
-        build_args = ["--config=Release"]
+        build_args = ["--config", "Release"]
         subprocess.check_call(
-            ["cmake", "--build", ".", f"--target={ext.target}", *build_args], cwd=build_temp,
+            ["cmake", "--build", ".", "--target", ext.target, *build_args], cwd=build_temp,
         )
         libpath = self.get_finalized_command('build_py').build_lib
         dst = os.path.join(libpath, os.path.dirname(self.get_ext_filename(ext.name)))
@@ -60,7 +60,7 @@ packages = ['gscompressor'] + ["gscompressor." + package for package in find_pac
 
 setup(
     name="gscompressor",
-    version='1.0.0',
+    version='1.0.1',
     author='yindaheng98',
     author_email='yindaheng98@gmail.com',
     url='https://github.com/yindaheng98/gscompressor',
