@@ -1,4 +1,3 @@
-import platform
 import torch
 import os
 import shutil
@@ -22,9 +21,15 @@ def compress(
         **kwargs
 ):
     gaussians = GaussianModel(sh_degree)
-    gaussians.load_ply(load_ply)
+    quantizer = VectorQuantizer(**kwargs)
+    if load_ply.endswith("point_cloud_quantized.ply"):
+        quantizer.load_quantized(gaussians, ply_path=load_ply)
+    elif load_ply.endswith("point_cloud.ply"):
+        gaussians.load_ply(load_ply)
+    else:
+        raise ValueError(f"Unsupported file format: {load_ply}. Expected point_cloud.ply or point_cloud_quantized.ply file.")
     compressor = VectorQuantizationCompressor(
-        VectorQuantizer(**kwargs),
+        quantizer,
         encoder_executable=encoder_executable,
         compression_level=compression_level,
         qposition=qposition,
@@ -83,9 +88,12 @@ if __name__ == "__main__":
     with torch.no_grad():
         match args.mode:
             case "compress":
+                load_ply = os.path.join(args.source, "point_cloud", "iteration_" + str(args.iteration), "point_cloud_quantized.ply")
+                if not os.path.exists(load_ply):
+                    load_ply = os.path.join(args.source, "point_cloud", "iteration_" + str(args.iteration), "point_cloud.ply")
                 compress(
                     sh_degree=args.sh_degree,
-                    load_ply=os.path.join(args.source, "point_cloud", "iteration_" + str(args.iteration), "point_cloud.ply"),
+                    load_ply=load_ply,
                     save_drc=save_drc,
                     encoder_executable=args.encoder_executable,
                     compression_level=args.compression_level,
