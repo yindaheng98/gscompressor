@@ -33,9 +33,17 @@ quantize() {
 }
 VQARGS="
     --num_clusters_scaling=2048 \
-    --num_clusters_rotation_re=512 \
-    --num_clusters_rotation_im=4096 \
-    --num_clusters_opacity=256 \
+    --num_clusters_rotation_re=256 \
+    --num_clusters_rotation_im=2048 \
+    --num_clusters_opacity=8 \
     --num_clusters_features_dc=8 \
     --num_clusters_features_rest 4 2 2"
-quantize truck truck-gscompress vq 30000
+quantize truck truck-gscompress vq-bad 30000
+VQARGS="
+    --num_clusters_scaling=8192 \
+    --num_clusters_rotation_re=8192 \
+    --num_clusters_rotation_im=8192 \
+    --num_clusters_opacity=8192 \
+    --num_clusters_features_dc=8192 \
+    --num_clusters_features_rest 8192 8192 8192"
+quantize truck truck-gscompress vq-good 30000
