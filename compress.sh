@@ -42,13 +42,15 @@ quantize() {
         --load_camera output/$2/$3-vq-$5/cameras.json \
         --rescale_factor 1.0
 }
+
+# 40 bit VQ
 VQARGS="
     --num_clusters_scaling=4096 \
     --num_clusters_rotation_re=16 \
     --num_clusters_rotation_im=4096 \
     --num_clusters_opacity=8 \
     --num_clusters_features_dc=8 \
-    --num_clusters_features_rest 4 2 2"
+    --num_clusters_features_rest 4 4 4"
 quantize_scales() {
     quantize $1 $2 1x $3 bad
     quantize $1 $2 2x $3 bad
@@ -56,6 +58,8 @@ quantize_scales() {
     quantize $1 $2 8x $3 bad
 }
 quantize_scales truck truck-gscompress 30000
+
+# 100 bit VQ
 VQARGS="
     --num_clusters_scaling=32764 \
     --num_clusters_rotation_re=32 \
