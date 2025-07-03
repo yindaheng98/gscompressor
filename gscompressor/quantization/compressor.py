@@ -24,7 +24,7 @@ class VectorQuantizationCompressor:
         qrotation=30,
         qopacity=30,
         qfeaturedc=30,
-        qfeaturesrest=30,
+        qfeaturerest=30,
     ):
         self.quantizer = quantizer
         if encoder_executable is None:
@@ -39,7 +39,7 @@ class VectorQuantizationCompressor:
         self.qrotation = qrotation
         self.qopacity = qopacity
         self.qfeaturedc = qfeaturedc
-        self.qfeaturesrest = qfeaturesrest
+        self.qfeaturerest = qfeaturerest
 
     def save_compressed(self, model: GaussianModel, path: str):
         ids_dict, codebook_dict = self.quantizer.quantize(model, update_codebook=False)
@@ -70,7 +70,7 @@ class VectorQuantizationCompressor:
                 "-qrotation", str(self.qrotation),
                 "-qopacity", str(self.qopacity),
                 "-qfeaturedc", str(self.qfeaturedc),
-                "-qfeaturerest", str(self.qfeaturesrest),
+                "-qfeaturerest", str(self.qfeaturerest),
             ])
 
         np.savez(

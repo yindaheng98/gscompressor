@@ -17,7 +17,7 @@ def compress(
         qrotation=30,
         qopacity=30,
         qfeaturedc=30,
-        qfeaturesrest=30,
+        qfeaturerest=30,
         **kwargs
 ):
     gaussians = GaussianModel(sh_degree)
@@ -37,7 +37,7 @@ def compress(
         qrotation=qrotation,
         qopacity=qopacity,
         qfeaturedc=qfeaturedc,
-        qfeaturesrest=qfeaturesrest,
+        qfeaturerest=qfeaturerest,
     )
     compressor.save_compressed(gaussians, save_drc)
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     parser.add_argument("--qrotation", default=30, type=int)
     parser.add_argument("--qopacity", default=30, type=int)
     parser.add_argument("--qfeaturedc", default=30, type=int)
-    parser.add_argument("--qfeaturesrest", default=30, type=int)
+    parser.add_argument("--qfeaturerest", default=30, type=int)
     parser.add_argument("--num_clusters", type=int, default=256)
     parser.add_argument("--num_clusters_rotation_re", type=int, default=None)
     parser.add_argument("--num_clusters_rotation_im", type=int, default=None)
@@ -102,7 +102,7 @@ if __name__ == "__main__":
                     qrotation=args.qrotation,
                     qopacity=args.qopacity,
                     qfeaturedc=args.qfeaturedc,
-                    qfeaturesrest=args.qfeaturesrest,
+                    qfeaturerest=args.qfeaturerest,
                     num_clusters=args.num_clusters,
                     num_clusters_rotation_re=args.num_clusters_rotation_re,
                     num_clusters_rotation_im=args.num_clusters_rotation_im,

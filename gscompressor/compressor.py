@@ -19,7 +19,7 @@ class Compressor:
         qrotation=30,
         qopacity=30,
         qfeaturedc=30,
-        qfeaturesrest=30,
+        qfeaturerest=30,
     ):
         self._model = model
         if encoder_executable is None:
@@ -31,7 +31,7 @@ class Compressor:
         self.qrotation = qrotation
         self.qopacity = qopacity
         self.qfeaturedc = qfeaturedc
-        self.qfeaturesrest = qfeaturesrest
+        self.qfeaturerest = qfeaturerest
 
     def save_compressed(self, path: str):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -47,7 +47,7 @@ class Compressor:
                 "-qrotation", str(self.qrotation),
                 "-qopacity", str(self.qopacity),
                 "-qfeaturedc", str(self.qfeaturedc),
-                "-qfeaturerest", str(self.qfeaturesrest),
+                "-qfeaturerest", str(self.qfeaturerest),
             ])
 
 

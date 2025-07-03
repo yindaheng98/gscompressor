@@ -16,7 +16,7 @@ def compress(
         qrotation=30,
         qopacity=30,
         qfeaturedc=30,
-        qfeaturesrest=30,
+        qfeaturerest=30,
 ):
     gaussians = GaussianModel(sh_degree)
     gaussians.load_ply(load_ply)
@@ -29,7 +29,7 @@ def compress(
         qrotation=qrotation,
         qopacity=qopacity,
         qfeaturedc=qfeaturedc,
-        qfeaturesrest=qfeaturesrest,
+        qfeaturerest=qfeaturerest,
     )
     compressor.save_compressed(save_drc)
 
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     parser.add_argument("--qrotation", default=30, type=int)
     parser.add_argument("--qopacity", default=30, type=int)
     parser.add_argument("--qfeaturedc", default=30, type=int)
-    parser.add_argument("--qfeaturesrest", default=30, type=int)
+    parser.add_argument("--qfeaturerest", default=30, type=int)
     parser = subparsers.add_parser("decompress")
     parser.add_argument("--decoder_executable", default=None, type=str)
     args = rootparser.parse_args()
@@ -84,7 +84,7 @@ if __name__ == "__main__":
                     qrotation=args.qrotation,
                     qopacity=args.qopacity,
                     qfeaturedc=args.qfeaturedc,
-                    qfeaturesrest=args.qfeaturesrest
+                    qfeaturerest=args.qfeaturerest
                 )
                 # Save the compressed model
             case "decompress":
