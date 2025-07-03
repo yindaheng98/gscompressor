@@ -43,9 +43,9 @@ quantize() {
         --rescale_factor 1.0
 }
 VQARGS="
-    --num_clusters_scaling=2048 \
-    --num_clusters_rotation_re=256 \
-    --num_clusters_rotation_im=2048 \
+    --num_clusters_scaling=4096 \
+    --num_clusters_rotation_re=16 \
+    --num_clusters_rotation_im=4096 \
     --num_clusters_opacity=8 \
     --num_clusters_features_dc=8 \
     --num_clusters_features_rest 4 2 2"
@@ -57,12 +57,12 @@ quantize_scales() {
 }
 quantize_scales truck truck-gscompress 30000
 VQARGS="
-    --num_clusters_scaling=8192 \
-    --num_clusters_rotation_re=8192 \
-    --num_clusters_rotation_im=8192 \
-    --num_clusters_opacity=8192 \
-    --num_clusters_features_dc=8192 \
-    --num_clusters_features_rest 8192 8192 8192"
+    --num_clusters_scaling=32764 \
+    --num_clusters_rotation_re=32 \
+    --num_clusters_rotation_im=32764 \
+    --num_clusters_opacity=32 \
+    --num_clusters_features_dc=32764 \
+    --num_clusters_features_rest 32764 32764 32764"
 quantize_scales() {
     quantize $1 $2 1x $3 good
     quantize $1 $2 2x $3 good
