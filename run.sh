@@ -30,7 +30,9 @@ evaluate() {
         -s output/$1-$3/frame1 \
         -d output/$1-$4/frame1 \
         -i $2 \
-        decompress
+        decompress > output/$1-$4/frame1/decompress.log
+    stat --printf="codebook %s\n" output/$1-$4/frame1/point_cloud/iteration_30000/point_cloud.codebook.npz >> output/$1-$4/frame1/decompress.log
+    stat --printf="drc %s\n" output/$1-$4/frame1/point_cloud/iteration_30000/point_cloud.drc >> output/$1-$4/frame1/decompress.log
     python render_cam0.py \
         -s data/$1/frame1 \
         -d output/$1-$4/frame1 \
