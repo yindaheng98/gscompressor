@@ -2,23 +2,17 @@
 train() {
     python -m reduced_3dgs.train \
         -s data/$1/frame1 \
-        -d output/$1/frame1 \
+        -d output/$1-camera/frame1 \
         -i 1000 \
         --mode camera-densify-prune-shculling \
         --empty_cache_every_step
     python train_nocam0.py \
         -s data/$1/frame1 \
-        -d output/$1-nocam0-camera/frame1 \
-        -i $2 \
-        --mode densify-prune-shculling \
-        --empty_cache_every_step \
-        --load_camera output/$1/frame1/cameras.json
-    python train_nocam0.py \
-        -s data/$1/frame1 \
         -d output/$1-nocam0/frame1 \
         -i $2 \
         --mode densify-prune-shculling \
-        --empty_cache_every_step
+        --empty_cache_every_step \
+        --load_camera output/$1-camera/frame1/cameras.json
 }
 evaluate() {
     python -m gscompressor.quantize \
@@ -42,11 +36,10 @@ evaluate() {
         -d output/$1-$4/frame1 \
         -i $2 \
         --mode camera \
-        --load_camera output/$1/frame1/cameras.json
+        --load_camera output/$1-camera/frame1/cameras.json
 }
 pipeline() {
     train $1 $2
     evaluate $1 $2 nocam0 nocam0-gscompress
-    evaluate $1 $2 nocam0-camera nocam0-camera-gscompress
 }
 pipeline basketball 30000
