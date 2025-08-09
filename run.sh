@@ -18,9 +18,9 @@ pipeline() {
         -d output/$1-gscompress/frame1 \
         -i $2 \
         compress \
-        --num_clusters_scaling=4096 \
-        --num_clusters_rotation_re=1024 \
-        --num_clusters_rotation_im=4096 \
+        --num_clusters_scaling=1024 \
+        --num_clusters_rotation_re=256 \
+        --num_clusters_rotation_im=1024 \
         --num_clusters_opacity=256 \
         --num_clusters_features_dc=512 \
         --num_clusters_features_rest 256 128 64
