@@ -43,3 +43,24 @@ pipeline() {
     evaluate $1 $2 nocam0 nocam0-gscompress
 }
 pipeline basketball 30000
+pipeline boxes 30000
+pipeline football 30000
+pipeline juggle 30000
+pipeline softball 30000
+pipeline tennis 30000
+
+pipeline discussion 30000
+pipeline stepin 30000
+pipeline trimming 30000
+pipeline vrheadset 30000
+
+pipeline boxing 30000
+pipeline taekwondo 30000
+pipeline walking 30000
+
+pipeline coffee_martini 30000
+pipeline cook_spinach 30000
+pipeline cut_roasted_beef 30000
+pipeline flame_salmon_1 30000
+pipeline flame_steak 30000
+pipeline sear_steak 30000
