@@ -12,14 +12,7 @@ pipeline() {
         -i $2 \
         --mode densify-prune-shculling \
         --empty_cache_every_step \
-        --load_camera output/$1/frame1/cameras.json \
-        --quantize \
-        -onum_clusters_scaling=4096 \
-        -onum_clusters_rotation_re=1024 \
-        -onum_clusters_rotation_im=4096 \
-        -onum_clusters_opacity=256 \
-        -onum_clusters_features_dc=512 \
-        -onum_clusters_features_rest=[256,128,64]
+        --load_camera output/$1/frame1/cameras.json
     python -m gscompressor.quantize \
         -s output/$1-quantize/frame1 \
         -d output/$1-gscompress/frame1 \
