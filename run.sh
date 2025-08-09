@@ -1,21 +1,29 @@
 #!/bin/bash
-pipeline() {
+train() {
     python -m reduced_3dgs.train \
         -s data/$1/frame1 \
         -d output/$1/frame1 \
-        -i $2 \
+        -i 1000 \
         --mode camera-densify-prune-shculling \
         --empty_cache_every_step
     python train_nocam0.py \
         -s data/$1/frame1 \
-        -d output/$1-quantize/frame1 \
+        -d output/$1-nocam0-camera/frame1 \
         -i $2 \
         --mode densify-prune-shculling \
         --empty_cache_every_step \
         --load_camera output/$1/frame1/cameras.json
+    python train_nocam0.py \
+        -s data/$1/frame1 \
+        -d output/$1-nocam0/frame1 \
+        -i $2 \
+        --mode densify-prune-shculling \
+        --empty_cache_every_step
+}
+evaluate() {
     python -m gscompressor.quantize \
-        -s output/$1-quantize/frame1 \
-        -d output/$1-gscompress/frame1 \
+        -s output/$1-$3/frame1 \
+        -d output/$1-$4/frame1 \
         -i $2 \
         compress \
         --num_clusters_scaling=1024 \
@@ -25,15 +33,20 @@ pipeline() {
         --num_clusters_features_dc=512 \
         --num_clusters_features_rest 256 128 64
     python -m gscompressor.quantize \
-        -s output/$1-quantize/frame1 \
-        -d output/$1-gscompress/frame1 \
+        -s output/$1-$3/frame1 \
+        -d output/$1-$4/frame1 \
         -i $2 \
         decompress
     python render_cam0.py \
         -s data/$1/frame1 \
-        -d output/$1-gscompress/frame1 \
+        -d output/$1-$4/frame1 \
         -i $2 \
         --mode camera \
         --load_camera output/$1/frame1/cameras.json
+}
+pipeline() {
+    train $1 $2
+    evaluate $1 $2 nocam0 nocam0-gscompress
+    evaluate $1 $2 nocam0-camera nocam0-camera-gscompress
 }
 pipeline basketball 30000
