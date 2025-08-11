@@ -18,7 +18,14 @@ train() {
         -ocamera_position_lr_init=0 \
         -ocamera_position_lr_final=0 \
         -ocamera_exposure_lr_init=0 \
-        -ocamera_exposure_lr_final=0
+        -ocamera_exposure_lr_final=0 \
+        --quantize \
+        -onum_clusters_scaling=1024 \
+        -onum_clusters_rotation_re=256 \
+        -onum_clusters_rotation_im=1024 \
+        -onum_clusters_opacity=256 \
+        -onum_clusters_features_dc=512 \
+        -onum_clusters_features_rest 256 128 64
 }
 evaluate() {
     python -m gscompressor.quantize \
@@ -41,7 +48,7 @@ evaluate() {
     stat --printf="drc %s\n" output/$1-$4/frame1/point_cloud/iteration_30000/point_cloud.drc >> output/$1-$4/frame1/decompress.log
     python -m gaussian_splatting.render \
         -s data/$1/frame1 \
-        -d output/$1-$4/frame1 \
+        -d output/$1-$3/frame1 \
         -i $2 \
         --mode camera \
         --load_camera output/$1-camera/frame1/cameras.json
