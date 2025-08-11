@@ -8,42 +8,21 @@ from gaussian_splatting import GaussianModel
 from gaussian_splatting.dataset import CameraDataset
 from gaussian_splatting.utils import psnr
 from gaussian_splatting.trainer import AbstractTrainer
-from gaussian_splatting.prepare import prepare_dataset
 from gaussian_splatting.train import save_cfg_args
 from reduced_3dgs.quantization import AbstractQuantizer
-from reduced_3dgs.prepare import modes, prepare_gaussians, prepare_trainer
-
-
-class NoCamera0Dataset(CameraDataset):
-    def __init__(self, dataset: CameraDataset):
-        self.dataset = dataset
-
-    def to(self, device):
-        return self.dataset.to(device)
-
-    def __len__(self):
-        return len(self.dataset) - 1  # Exclude the first camera
-
-    def __getitem__(self, idx):
-        return self.dataset[idx + 1]
-
-
-def prepare_training(sh_degree: int, source: str, device: str, mode: str, trainable_camera: bool = False, load_ply: str = None, load_camera: str = None, load_depth=False, with_scale_reg=False, quantize: bool = False, load_quantized: str = None, configs={}):
-    dataset = NoCamera0Dataset(prepare_dataset(source=source, device=device, trainable_camera=trainable_camera, load_camera=load_camera, load_depth=load_depth))
-    gaussians = prepare_gaussians(sh_degree=sh_degree, source=source, device=device, trainable_camera=trainable_camera, load_ply=load_ply)
-    trainer, quantizer = prepare_trainer(gaussians=gaussians, dataset=dataset, mode=mode, with_scale_reg=with_scale_reg, quantize=quantize, load_quantized=load_quantized, configs=configs)
-    return dataset, gaussians, trainer, quantizer
+from reduced_3dgs.prepare import modes
+from reduced_3dgs.train import prepare_training
 
 
 def training(dataset: CameraDataset, gaussians: GaussianModel, trainer: AbstractTrainer, quantizer: AbstractQuantizer, destination: str, iteration: int, save_iterations: List[int], device: str, empty_cache_every_step=False):
     shutil.rmtree(os.path.join(destination, "point_cloud"), ignore_errors=True)  # remove the previous point cloud
     pbar = tqdm(range(1, iteration+1))
-    epoch = list(range(len(dataset)))
+    epoch = list(range(1, len(dataset)))
     epoch_psnr = torch.empty(3, 0, device=device)
     ema_loss_for_log = 0.0
     avg_psnr_for_log = 0.0
     for step in pbar:
-        epoch_idx = step % len(dataset)
+        epoch_idx = step % (len(dataset) - 1)
         if epoch_idx == 0:
             avg_psnr_for_log = epoch_psnr.mean().item()
             epoch_psnr = torch.empty(3, 0, device=device)
