@@ -25,7 +25,7 @@ train() {
         -onum_clusters_rotation_im=1024 \
         -onum_clusters_opacity=256 \
         -onum_clusters_features_dc=512 \
-        -onum_clusters_features_rest 256 128 64
+        -onum_clusters_features_rest=[256,128,64]
 }
 evaluate() {
     python -m gscompressor.quantize \
