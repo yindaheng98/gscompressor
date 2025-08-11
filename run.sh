@@ -12,6 +12,7 @@ train() {
         -i $2 \
         --mode camera-densify-prune-shculling \
         --empty_cache_every_step \
+        --no_depth_data \
         --load_camera output/$1-camera/frame1/cameras.json \
         -ocamera_rotation_lr_init=0 \
         -ocamera_rotation_lr_final=0 \
@@ -20,12 +21,12 @@ train() {
         -ocamera_exposure_lr_init=0 \
         -ocamera_exposure_lr_final=0 \
         --quantize \
-        -onum_clusters_scaling=1024 \
-        -onum_clusters_rotation_re=256 \
-        -onum_clusters_rotation_im=1024 \
-        -onum_clusters_opacity=256 \
-        -onum_clusters_features_dc=512 \
-        -onum_clusters_features_rest=[256,128,64]
+        -onum_clusters_scaling=4096 \
+        -onum_clusters_rotation_re=512 \
+        -onum_clusters_rotation_im=4096 \
+        -onum_clusters_opacity=512 \
+        -onum_clusters_features_dc=1024 \
+        -onum_clusters_features_rest=[512,256,128]
 }
 evaluate() {
     python -m gscompressor.quantize \
