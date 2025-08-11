@@ -10,10 +10,15 @@ train() {
         -s data/$1/frame1 \
         -d output/$1-nocam0/frame1 \
         -i $2 \
-        --mode densify-prune-shculling \
+        --mode camera-densify-prune-shculling \
         --empty_cache_every_step \
         --load_camera output/$1-camera/frame1/cameras.json \
-        --no_depth_data
+        -ocamera_rotation_lr_init=0 \
+        -ocamera_rotation_lr_final=0 \
+        -ocamera_position_lr_init=0 \
+        -ocamera_position_lr_final=0 \
+        -ocamera_exposure_lr_init=0 \
+        -ocamera_exposure_lr_final=0
 }
 evaluate() {
     python -m gscompressor.quantize \
@@ -34,7 +39,7 @@ evaluate() {
         decompress > output/$1-$4/frame1/decompress.log
     stat --printf="codebook %s\n" output/$1-$4/frame1/point_cloud/iteration_30000/point_cloud.codebook.npz >> output/$1-$4/frame1/decompress.log
     stat --printf="drc %s\n" output/$1-$4/frame1/point_cloud/iteration_30000/point_cloud.drc >> output/$1-$4/frame1/decompress.log
-    python render_cam0.py \
+    python -m gaussian_splatting.render \
         -s data/$1/frame1 \
         -d output/$1-$4/frame1 \
         -i $2 \
