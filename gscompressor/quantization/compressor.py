@@ -92,17 +92,17 @@ class VectorQuantizationCompressor:
         ids_dict, codebook_dict = self.quantizer.quantize(model, update_codebook=False)
 
         # Extract model attributes (reduced 3DGS format) directly from model and ids_dict
-        positions = model._xyz.detach().cpu().numpy().astype(np.float32)  # (N, 3)
-        scales = ids_dict["scaling"].cpu().numpy().reshape(-1, 1).astype(np.float32)  # (N, 1)
+        positions = model._xyz.detach().cpu().numpy()  # (N, 3)
+        scales = ids_dict["scaling"].cpu().numpy().reshape(-1, 1)  # (N, 1)
         rotations = np.column_stack([
             ids_dict["rotation_re"].cpu().numpy(),
             ids_dict["rotation_im"].cpu().numpy()
-        ]).astype(np.float32)  # (N, 2)
-        opacities = ids_dict["opacity"].cpu().numpy().reshape(-1, 1).astype(np.float32)  # (N, 1)
-        features_dc = ids_dict["features_dc"].cpu().numpy().reshape(-1, 1).astype(np.float32)  # (N, 1)
+        ])  # (N, 2)
+        opacities = ids_dict["opacity"].cpu().numpy().reshape(-1, 1)  # (N, 1)
+        features_dc = ids_dict["features_dc"].cpu().numpy().reshape(-1, 1)  # (N, 1)
         # features_rest: combine all sh_degrees into (N, 9)
         features_rest_list = [ids_dict[f"features_rest_{sh_degree}"].cpu().numpy() for sh_degree in range(model.max_sh_degree)]
-        features_rest = np.column_stack(features_rest_list).astype(np.float32)  # (N, 9)
+        features_rest = np.column_stack(features_rest_list)  # (N, 9)
 
         # Encode
         encoded = dracoreduced3dgs.encode(
