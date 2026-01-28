@@ -105,7 +105,7 @@ setup(
             include_dirs=[str(NumpyImport()), './cpython', './submodules/draco3dgs/src', './build/submodules/draco3dgs'],
             extra_compile_args=['/std:c++17', '/O2'] if platform.system() == "Windows" else ['-std=c++11', '-O3'],
             extra_link_args=['/LIBPATH:' + os.path.abspath('./build/submodules/draco3dgs/Release'), 'draco.lib'] if platform.system() == "Windows"
-            else ['-L' + os.path.abspath('./build/submodules/draco3dgs'), '-l:libdraco.a'],
+            else ['-L' + os.path.abspath('./build/submodules/draco3dgs'), '-ldraco'],
         ),
         Extension(
             'gscompressor.quantization.dracoreduced3dgs',
@@ -115,7 +115,7 @@ setup(
             include_dirs=[str(NumpyImport()), './cpython', './submodules/dracoreduced3dgs/src', './build/submodules/dracoreduced3dgs'],
             extra_compile_args=['/std:c++17', '/O2'] if platform.system() == "Windows" else ['-std=c++11', '-O3'],
             extra_link_args=['/LIBPATH:' + os.path.abspath('./build/submodules/dracoreduced3dgs/Release'), 'draco.lib'] if platform.system() == "Windows"
-            else ['-L' + os.path.abspath('./build/submodules/dracoreduced3dgs'), '-l:libdraco.a'],
+            else ['-L' + os.path.abspath('./build/submodules/dracoreduced3dgs'), '-ldraco'],
         ),
     ],
     cmdclass={"build_ext": CMakeBuild},
