@@ -78,7 +78,7 @@ packages = ['gscompressor'] + ["gscompressor." + package for package in find_pac
 
 setup(
     name="gscompressor",
-    version='1.1.0',
+    version='1.1.1',
     author='yindaheng98',
     author_email='yindaheng98@gmail.com',
     url='https://github.com/yindaheng98/gscompressor',
@@ -92,7 +92,6 @@ setup(
     package_dir={
         'gscompressor': 'gscompressor',
     },
-    setup_requires=['cython', 'numpy'],
     ext_modules=[
         CMakeExtension("gscompressor.draco_encoder", sourcedir="submodules/draco3dgs", target="draco_encoder"),
         CMakeExtension("gscompressor.draco_decoder", sourcedir="submodules/draco3dgs", target="draco_decoder"),
