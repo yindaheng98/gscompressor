@@ -1,1 +1,1 @@
-from .compressor import VectorQuantizationCompressor
+from .compressor import VectorQuantizationCompressor, VectorQuantizationDecompressor

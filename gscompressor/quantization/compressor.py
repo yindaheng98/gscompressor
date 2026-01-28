@@ -19,7 +19,6 @@ class VectorQuantizationCompressor:
         self,
         quantizer: VectorQuantizer,
         encoder_executable: str = None,
-        decoder_executable: str = None,
         compression_level: int = 0,
         qposition=30,
         qscale=30,
@@ -32,10 +31,7 @@ class VectorQuantizationCompressor:
         self.quantizer = quantizer
         if encoder_executable is None:
             encoder_executable = default_encoder_executable
-        if decoder_executable is None:
-            decoder_executable = default_decoder_executable
         self.encoder_executable = encoder_executable
-        self.decoder_executable = decoder_executable
         self.compression_level = compression_level
         self.qposition = qposition
         self.qscale = qscale
@@ -121,6 +117,20 @@ class VectorQuantizationCompressor:
             os.path.join(os.path.splitext(path)[0] + ".codebook.npz"),
             **{k: v.cpu().numpy() for k, v in codebook_dict.items()}
         )
+
+
+class VectorQuantizationDecompressor:
+    def __init__(
+        self,
+        quantizer: VectorQuantizer,
+        decoder_executable: str = None,
+        use_executable_backend: bool = False,
+    ):
+        self.quantizer = quantizer
+        if decoder_executable is None:
+            decoder_executable = default_decoder_executable
+        self.decoder_executable = decoder_executable
+        self.use_executable_backend = use_executable_backend
 
     def load_compressed(self, model: GaussianModel, path: str):
         if self.use_executable_backend:
