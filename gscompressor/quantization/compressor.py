@@ -161,11 +161,11 @@ class VectorQuantizationCompressor:
         # opacities(Nx1), features_dc(Nx1), features_rest(Nx9)
         # The values are stored as floats but represent integer indices
         ids_dict = {
-            'scaling': torch.tensor(np.round(pc.scales.flatten()).astype(np.int64), device=device, dtype=torch.long),
-            'rotation_re': torch.tensor(np.round(pc.rotations[:, 0]).astype(np.int64), device=device, dtype=torch.long),
-            'rotation_im': torch.tensor(np.round(pc.rotations[:, 1]).astype(np.int64), device=device, dtype=torch.long),
-            'opacity': torch.tensor(np.round(pc.opacities.flatten()).astype(np.int64), device=device, dtype=torch.long),
-            'features_dc': torch.tensor(np.round(pc.features_dc.flatten()).astype(np.int64), device=device, dtype=torch.long).unsqueeze(-1),
+            'scaling': torch.tensor(pc.scales.flatten(), device=device),
+            'rotation_re': torch.tensor(pc.rotations[:, 0], device=device),
+            'rotation_im': torch.tensor(pc.rotations[:, 1], device=device),
+            'opacity': torch.tensor(pc.opacities.flatten(), device=device),
+            'features_dc': torch.tensor(pc.features_dc.flatten(), device=device).unsqueeze(-1),
         }
 
         # features_rest: Nx9 -> split into 3 sh_degrees, each with Nx3
@@ -174,7 +174,7 @@ class VectorQuantizationCompressor:
             start_idx = sh_degree * 3
             end_idx = start_idx + 3
             ids_dict[f'features_rest_{sh_degree}'] = torch.tensor(
-                np.round(features_rest[:, start_idx:end_idx]).astype(np.int64), device=device, dtype=torch.long
+                features_rest[:, start_idx:end_idx], device=device
             )
 
         # Load codebook

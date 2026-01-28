@@ -1,5 +1,7 @@
 # cython: language_level=3
 from libcpp.vector cimport vector
+from libc.stdint cimport int32_t
+
 
 cdef extern from "dracoreduced3dgs.h" namespace "DracoReduced3DGS":
 
@@ -11,11 +13,11 @@ cdef extern from "dracoreduced3dgs.h" namespace "DracoReduced3DGS":
 
     cdef struct PointCloudObject:
         vector[float] positions
-        vector[float] scales
-        vector[float] rotations
-        vector[float] opacities
-        vector[float] features_dc
-        vector[float] features_rest
+        vector[int32_t] scales
+        vector[int32_t] rotations
+        vector[int32_t] opacities
+        vector[int32_t] features_dc
+        vector[int32_t] features_rest
         int num_points
         decoding_status decode_status
 
@@ -27,11 +29,11 @@ cdef extern from "dracoreduced3dgs.h" namespace "DracoReduced3DGS":
 
     EncodedObject encode_point_cloud(
         const vector[float] & positions,
-        const vector[float] & scales,
-        const vector[float] & rotations,
-        const vector[float] & opacities,
-        const vector[float] & features_dc,
-        const vector[float] & features_rest,
+        const vector[int32_t] & scales,
+        const vector[int32_t] & rotations,
+        const vector[int32_t] & opacities,
+        const vector[int32_t] & features_dc,
+        const vector[int32_t] & features_rest,
         int compression_level,
         int qp, int qscale, int qrotation, int qopacity, int qfeaturedc, int qfeaturerest
     ) except +
