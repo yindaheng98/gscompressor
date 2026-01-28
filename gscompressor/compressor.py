@@ -61,6 +61,11 @@ class Compressor:
             ])
 
     def _save_compressed_pyd(self, model: GaussianModel, path: str):
+        # NOTE: This method does NOT save normals data, unlike _save_compressed_executable.
+        # The executable backend reads from a PLY file which includes normals (nx, ny, nz),
+        # while this Python extension (draco3dgs) only encodes the attributes listed below.
+        # As a result, the compressed output from this method will differ from the executable backend.
+
         # Extract model attributes
         positions = model._xyz.detach().cpu().numpy()  # (N, 3)
         scales = model._scaling.detach().cpu().numpy()  # (N, 3)
