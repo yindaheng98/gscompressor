@@ -78,7 +78,7 @@ packages = ['gscompressor'] + ["gscompressor." + package for package in find_pac
 
 setup(
     name="gscompressor",
-    version='1.1.1',
+    version='1.1.2',
     author='yindaheng98',
     author_email='yindaheng98@gmail.com',
     url='https://github.com/yindaheng98/gscompressor',
@@ -106,6 +106,16 @@ setup(
             extra_compile_args=['/std:c++17', '/O2'] if platform.system() == "Windows" else ['-std=c++11', '-O3'],
             extra_link_args=['/LIBPATH:' + os.path.abspath('./build/submodules/draco3dgs/Release'), 'draco.lib'] if platform.system() == "Windows"
             else ['-L' + os.path.abspath('./build/submodules/draco3dgs'), '-l:libdraco.a'],
+        ),
+        Extension(
+            'gscompressor.quantization.dracoreduced3dgs',
+            sources=['./cpython/dracoreduced3dgs.pyx'],
+            depends=['./cpython/dracoreduced3dgs.h'],
+            language='c++',
+            include_dirs=[str(NumpyImport()), './cpython', './submodules/dracoreduced3dgs/src', './build/submodules/dracoreduced3dgs'],
+            extra_compile_args=['/std:c++17', '/O2'] if platform.system() == "Windows" else ['-std=c++11', '-O3'],
+            extra_link_args=['/LIBPATH:' + os.path.abspath('./build/submodules/dracoreduced3dgs/Release'), 'draco.lib'] if platform.system() == "Windows"
+            else ['-L' + os.path.abspath('./build/submodules/dracoreduced3dgs'), '-l:libdraco.a'],
         ),
     ],
     cmdclass={"build_ext": CMakeBuild},
