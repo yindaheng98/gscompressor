@@ -21,21 +21,21 @@ $BASE -d "$TEMP_DIR/pyd" compress $ENC_OPTS
 
 # copy for cross decoding
 cp -r "$TEMP_DIR/exe" "$TEMP_DIR/exe_exe"
-cp -r "$TEMP_DIR/exe" "$TEMP_DIR/exe_pyd"
-cp -r "$TEMP_DIR/pyd" "$TEMP_DIR/pyd_exe"
 cp -r "$TEMP_DIR/pyd" "$TEMP_DIR/pyd_pyd"
+cp -r "$TEMP_DIR/pyd" "$TEMP_DIR/pyd_exe"
+cp -r "$TEMP_DIR/exe" "$TEMP_DIR/exe_pyd"
 
 # 3. exe encode -> exe decode
 $BASE -d "$TEMP_DIR/exe_exe" decompress --use_executable_backend
 
-# 4. exe encode -> pyd decode
-$BASE -d "$TEMP_DIR/exe_pyd" decompress
+# 6. pyd encode -> pyd decode
+$BASE -d "$TEMP_DIR/pyd_pyd" decompress
 
 # 5. pyd encode -> exe decode
 $BASE -d "$TEMP_DIR/pyd_exe" decompress --use_executable_backend
 
-# 6. pyd encode -> pyd decode
-$BASE -d "$TEMP_DIR/pyd_pyd" decompress
+# 4. exe encode -> pyd decode
+$BASE -d "$TEMP_DIR/exe_pyd" decompress
 
 # compare
 echo "=== DRC MD5 ==="
@@ -44,7 +44,7 @@ md5sum "$TEMP_DIR/pyd/point_cloud/iteration_$ITERATION/point_cloud.drc"
 echo "=== PLY MD5 ==="
 md5sum "$TEMP_DIR/exe_exe/point_cloud/iteration_$ITERATION/point_cloud.ply"
 md5sum "$TEMP_DIR/pyd_pyd/point_cloud/iteration_$ITERATION/point_cloud.ply"
-md5sum "$TEMP_DIR/exe_pyd/point_cloud/iteration_$ITERATION/point_cloud.ply"
 md5sum "$TEMP_DIR/pyd_exe/point_cloud/iteration_$ITERATION/point_cloud.ply"
+md5sum "$TEMP_DIR/exe_pyd/point_cloud/iteration_$ITERATION/point_cloud.ply"
 
 rm -rf "$TEMP_DIR"
