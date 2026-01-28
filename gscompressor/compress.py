@@ -21,7 +21,6 @@ def compress(
     gaussians = GaussianModel(sh_degree)
     gaussians.load_ply(load_ply)
     compressor = Compressor(
-        gaussians,
         encoder_executable=encoder_executable,
         compression_level=compression_level,
         qposition=qposition,
@@ -31,7 +30,7 @@ def compress(
         qfeaturedc=qfeaturedc,
         qfeaturerest=qfeaturerest,
     )
-    compressor.save_compressed(save_drc)
+    compressor.save_compressed(gaussians, save_drc)
 
 
 def decompress(
@@ -41,10 +40,9 @@ def decompress(
         decoder_executable: str,
 ):
     gaussians = GaussianModel(sh_degree)
-    compressor = Decompressor(
-        gaussians,
+    decompressor = Decompressor(
         decoder_executable=decoder_executable)
-    compressor.load_compressed(load_drc)
+    decompressor.load_compressed(gaussians, load_drc)
     gaussians.save_ply(save_ply)
 
 
