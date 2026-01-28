@@ -6,6 +6,13 @@ from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
 
 
+class NumpyImport:
+    def __repr__(self):
+        import numpy as np
+        return np.get_include()
+    __fspath__ = __repr__
+
+
 class CMakeExtension(Extension):
     def __init__(self, name: str, sourcedir: str, target: str) -> None:
         super().__init__(name, sources=[])
@@ -15,14 +22,25 @@ class CMakeExtension(Extension):
 
 class CMakeBuild(build_ext):
     def get_ext_filename(self, ext_name):
-        # This extension is built to be a command-line tool, not a Python module,
-        # so we return an empty string to avoid creating a Python module file.
-        ext_name = ext_name.replace('.', os.sep)
-        if platform.system() == "Windows":
-            return ext_name + ".exe"
-        return ext_name
+        for ext in self.extensions:
+            if isinstance(ext, CMakeExtension) and ext.name == ext_name:
+                name = ext_name.replace('.', os.sep)
+                return name + ".exe" if platform.system() == "Windows" else name
+        return super().get_ext_filename(ext_name)
 
-    def build_extension(self, ext: CMakeExtension) -> None:
+    def run(self):
+        # Build CMake extensions first (produces static libraries)
+        for ext in self.extensions:
+            if isinstance(ext, CMakeExtension):
+                self.build_cmake_extension(ext)
+        # Build Cython extensions
+        cython_exts = [ext for ext in self.extensions if not isinstance(ext, CMakeExtension)]
+        if cython_exts:
+            orig, self.extensions = self.extensions, cython_exts
+            build_ext.run(self)
+            self.extensions = orig
+
+    def build_cmake_extension(self, ext: CMakeExtension) -> None:
         build_temp = os.path.join(os.path.dirname(__file__), "build", ext.sourcedir)
         os.makedirs(build_temp, exist_ok=True)
         sourcedir = os.path.abspath(ext.sourcedir)
@@ -60,7 +78,7 @@ packages = ['gscompressor'] + ["gscompressor." + package for package in find_pac
 
 setup(
     name="gscompressor",
-    version='1.0.4',
+    version='1.0.5',
     author='yindaheng98',
     author_email='yindaheng98@gmail.com',
     url='https://github.com/yindaheng98/gscompressor',
@@ -74,11 +92,22 @@ setup(
     package_dir={
         'gscompressor': 'gscompressor',
     },
+    setup_requires=['cython', 'numpy'],
     ext_modules=[
         CMakeExtension("gscompressor.draco_encoder", sourcedir="submodules/draco3dgs", target="draco_encoder"),
         CMakeExtension("gscompressor.draco_decoder", sourcedir="submodules/draco3dgs", target="draco_decoder"),
         CMakeExtension("gscompressor.quantization.draco_encoder", sourcedir="submodules/dracoreduced3dgs", target="draco_encoder"),
         CMakeExtension("gscompressor.quantization.draco_decoder", sourcedir="submodules/dracoreduced3dgs", target="draco_decoder"),
+        Extension(
+            'gscompressor.draco3dgs',
+            sources=['./cpython/draco3dgs.pyx'],
+            depends=['./cpython/draco3dgs.h'],
+            language='c++',
+            include_dirs=[str(NumpyImport()), './cpython', './submodules/draco3dgs/src', './build/submodules/draco3dgs'],
+            extra_compile_args=['/std:c++17', '/O2'] if platform.system() == "Windows" else ['-std=c++11', '-O3'],
+            extra_link_args=['/LIBPATH:' + os.path.abspath('./build/submodules/draco3dgs/Release'), 'draco.lib'] if platform.system() == "Windows"
+            else ['-L' + os.path.abspath('./build/submodules/draco3dgs'), '-l:libdraco.a'],
+        ),
     ],
     cmdclass={"build_ext": CMakeBuild},
     include_package_data=True,
