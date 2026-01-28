@@ -3,11 +3,11 @@
 
 #include <vector>
 #include <cstddef>
+#include <cstring>
 #include <iostream>
 #include "draco/compression/decode.h"
 #include "draco/compression/encode.h"
-#include "draco/core/encoder_buffer.h"
-#include "draco/point_cloud/point_cloud_builder.h"
+#include "draco/point_cloud/point_cloud.h"
 
 namespace Draco3DGS
 {
@@ -50,6 +50,8 @@ namespace Draco3DGS
         encoding_status encode_status;
     };
 
+    // Extract attribute data from PointCloud to vector using memcpy (bulk copy)
+    // Reference: ply_encoder.cc EncodeData() - uses GetAddress for direct memory access
     template <int N>
     void extract_attr(draco::PointCloud *pc, draco::GeometryAttribute::Type type, std::vector<float> &out, int num_points)
     {
@@ -58,13 +60,18 @@ namespace Draco3DGS
             return;
         const auto *att = pc->attribute(att_id);
         out.resize(num_points * N);
-        float values[N];
-        for (draco::PointIndex i(0); i < num_points; ++i)
+        // Use bulk memcpy when identity mapping (data is contiguous)
+        // Reference: geometry_attribute.h GetAddress() returns pointer to contiguous buffer
+        if (att->is_mapping_identity())
         {
-            att->ConvertValue<float>(att->mapped_index(i), N, values);
-            for (int c = 0; c < N; ++c)
+            std::memcpy(out.data(), att->GetAddress(draco::AttributeValueIndex(0)), num_points * N * sizeof(float));
+        }
+        else
+        {
+            // Fallback to per-point copy for non-identity mapping
+            for (draco::PointIndex i(0); i < num_points; ++i)
             {
-                out[i.value() * N + c] = values[c];
+                std::memcpy(&out[i.value() * N], att->GetAddress(att->mapped_index(i)), N * sizeof(float));
             }
         }
     }
@@ -75,6 +82,7 @@ namespace Draco3DGS
         draco::DecoderBuffer decoderBuffer;
         decoderBuffer.Init(buffer, buffer_len);
 
+        // Reference: draco_decoder.cc line 89-93
         auto type_statusor = draco::Decoder::GetEncodedGeometryType(&decoderBuffer);
         if (!type_statusor.ok())
         {
@@ -82,6 +90,7 @@ namespace Draco3DGS
             return obj;
         }
 
+        // Reference: draco_decoder.cc line 110-116
         draco::Decoder decoder;
         auto statusor = decoder.DecodePointCloudFromBuffer(&decoderBuffer);
         if (!statusor.ok())
@@ -104,17 +113,20 @@ namespace Draco3DGS
         return obj;
     }
 
-    template <int N>
-    int add_attr(draco::PointCloudBuilder &pcb, draco::GeometryAttribute::Type type, const std::vector<float> &data, int num_points)
+    // Add attribute to PointCloud from vector using memcpy (bulk copy)
+    // Reference: ply_decoder.cc ReadNamedPropertiesByNameToAttribute()
+    int add_attr(draco::PointCloud *pc, draco::GeometryAttribute::Type type, const std::vector<float> &data, int num_components, int num_points)
     {
         if (data.empty())
             return -1;
-        const int id = pcb.AddAttribute(type, N, draco::DT_FLOAT32);
-        for (draco::PointIndex i(0); i < num_points; ++i)
-        {
-            pcb.SetAttributeValueForPoint(id, i, &data[i.value() * N]);
-        }
-        return id;
+        // Reference: ply_decoder.cc line 178-181
+        draco::GeometryAttribute va;
+        va.Init(type, nullptr, num_components, draco::DT_FLOAT32, false, draco::DataTypeLength(draco::DT_FLOAT32) * num_components, 0);
+        const int att_id = pc->AddAttribute(va, true, num_points);
+        // Bulk copy using memcpy - attribute buffer is contiguous after AddAttribute with identity mapping
+        // Reference: geometry_attribute.h SetAttributeValue() writes to byte_pos = index * byte_stride
+        std::memcpy(pc->attribute(att_id)->GetAddress(draco::AttributeValueIndex(0)), data.data(), data.size() * sizeof(float));
+        return att_id;
     }
 
     EncodedObject encode_point_cloud(
@@ -131,18 +143,19 @@ namespace Draco3DGS
         const int num_points = positions.size() / DIM_POSITION;
         const int speed = 10 - compression_level;
 
-        draco::PointCloudBuilder pcb;
-        pcb.Start(num_points);
+        // Reference: ply_decoder.cc line 279-280
+        draco::PointCloud pc;
+        pc.set_num_points(num_points);
 
-        add_attr<DIM_POSITION>(pcb, draco::GeometryAttribute::POSITION, positions, num_points);
-        add_attr<DIM_SCALE>(pcb, draco::GeometryAttribute::SCALE_3DGS, scales, num_points);
-        add_attr<DIM_ROTATION>(pcb, draco::GeometryAttribute::ROTATION_3DGS, rotations, num_points);
-        add_attr<DIM_OPACITY>(pcb, draco::GeometryAttribute::OPACITY_3DGS, opacities, num_points);
-        add_attr<DIM_FEATURE_DC>(pcb, draco::GeometryAttribute::FEATURE_DC_3DGS, features_dc, num_points);
-        add_attr<DIM_FEATURE_REST>(pcb, draco::GeometryAttribute::FEATURE_REST_3DGS, features_rest, num_points);
+        // Add attributes - Reference: ply_decoder.cc DecodeVertexData()
+        add_attr(&pc, draco::GeometryAttribute::POSITION, positions, DIM_POSITION, num_points);
+        add_attr(&pc, draco::GeometryAttribute::SCALE_3DGS, scales, DIM_SCALE, num_points);
+        add_attr(&pc, draco::GeometryAttribute::ROTATION_3DGS, rotations, DIM_ROTATION, num_points);
+        add_attr(&pc, draco::GeometryAttribute::OPACITY_3DGS, opacities, DIM_OPACITY, num_points);
+        add_attr(&pc, draco::GeometryAttribute::FEATURE_DC_3DGS, features_dc, DIM_FEATURE_DC, num_points);
+        add_attr(&pc, draco::GeometryAttribute::FEATURE_REST_3DGS, features_rest, DIM_FEATURE_REST, num_points);
 
-        auto pc = pcb.Finalize(true);
-
+        // Reference: draco_encoder.cc line 390-429
         draco::Encoder encoder;
         encoder.SetSpeedOptions(speed, speed);
         if (qp > 0)
@@ -158,8 +171,9 @@ namespace Draco3DGS
         if (qfeaturerest > 0)
             encoder.SetAttributeQuantization(draco::GeometryAttribute::FEATURE_REST_3DGS, qfeaturerest);
 
+        // Reference: draco_encoder.cc EncodePointCloudToFile() line 163-170
         draco::EncoderBuffer buffer;
-        const draco::Status status = encoder.EncodePointCloudToBuffer(*pc, &buffer);
+        const draco::Status status = encoder.EncodePointCloudToBuffer(pc, &buffer);
 
         if (status.ok())
         {
