@@ -76,6 +76,22 @@ namespace Draco3DGS
         }
     }
 
+    // Add attribute to PointCloud from vector using memcpy (bulk copy)
+    // Reference: ply_decoder.cc ReadNamedPropertiesByNameToAttribute()
+    int add_attr(draco::PointCloud *pc, draco::GeometryAttribute::Type type, const std::vector<float> &data, int num_components, int num_points)
+    {
+        if (data.empty())
+            return -1;
+        // Reference: ply_decoder.cc line 178-181
+        draco::GeometryAttribute va;
+        va.Init(type, nullptr, num_components, draco::DT_FLOAT32, false, draco::DataTypeLength(draco::DT_FLOAT32) * num_components, 0);
+        const int att_id = pc->AddAttribute(va, true, num_points);
+        // Bulk copy using memcpy - attribute buffer is contiguous after AddAttribute with identity mapping
+        // Reference: geometry_attribute.h SetAttributeValue() writes to byte_pos = index * byte_stride
+        std::memcpy(pc->attribute(att_id)->GetAddress(draco::AttributeValueIndex(0)), data.data(), data.size() * sizeof(float));
+        return att_id;
+    }
+
     PointCloudObject decode_point_cloud(const char *buffer, std::size_t buffer_len)
     {
         PointCloudObject obj;
@@ -111,22 +127,6 @@ namespace Draco3DGS
 
         obj.decode_status = successful;
         return obj;
-    }
-
-    // Add attribute to PointCloud from vector using memcpy (bulk copy)
-    // Reference: ply_decoder.cc ReadNamedPropertiesByNameToAttribute()
-    int add_attr(draco::PointCloud *pc, draco::GeometryAttribute::Type type, const std::vector<float> &data, int num_components, int num_points)
-    {
-        if (data.empty())
-            return -1;
-        // Reference: ply_decoder.cc line 178-181
-        draco::GeometryAttribute va;
-        va.Init(type, nullptr, num_components, draco::DT_FLOAT32, false, draco::DataTypeLength(draco::DT_FLOAT32) * num_components, 0);
-        const int att_id = pc->AddAttribute(va, true, num_points);
-        // Bulk copy using memcpy - attribute buffer is contiguous after AddAttribute with identity mapping
-        // Reference: geometry_attribute.h SetAttributeValue() writes to byte_pos = index * byte_stride
-        std::memcpy(pc->attribute(att_id)->GetAddress(draco::AttributeValueIndex(0)), data.data(), data.size() * sizeof(float));
-        return att_id;
     }
 
     EncodedObject encode_point_cloud(
