@@ -27,7 +27,7 @@ namespace DracoReduced3DGS
     // Reduced 3DGS attribute dimensions (fixed)
     constexpr int DIM_POSITION = 3;
     constexpr int DIM_SCALE = 1;    // Reduced from 3
-    constexpr int DIM_ROTATION = 4; // rot_re(2) + rot_im(2)
+    constexpr int DIM_ROTATION = 2; // Complex number: rot_re, rot_im
     constexpr int DIM_OPACITY = 1;
     constexpr int DIM_FEATURE_DC = 1;   // Reduced from 3
     constexpr int DIM_FEATURE_REST = 9; // Reduced from 45
@@ -36,7 +36,7 @@ namespace DracoReduced3DGS
     {
         std::vector<float> positions;     // Nx3
         std::vector<float> scales;        // Nx1
-        std::vector<float> rotations;     // Nx4
+        std::vector<float> rotations;     // Nx2
         std::vector<float> opacities;     // Nx1
         std::vector<float> features_dc;   // Nx1
         std::vector<float> features_rest; // Nx9

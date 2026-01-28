@@ -20,7 +20,7 @@ class PointCloud:
     def __init__(self, positions, scales, rotations, opacities, features_dc, features_rest):
         self.positions = positions        # Nx3
         self.scales = scales              # Nx1
-        self.rotations = rotations        # Nx4
+        self.rotations = rotations        # Nx2
         self.opacities = opacities        # Nx1
         self.features_dc = features_dc    # Nx1
         self.features_rest = features_rest  # Nx9
@@ -47,7 +47,7 @@ def encode(
     Args:
         positions: Nx3 float array
         scales: Nx1 float array
-        rotations: Nx4 float array
+        rotations: Nx2 float array
         opacities: Nx1 float array
         features_dc: Nx1 float array
         features_rest: Nx9 float array
@@ -82,7 +82,7 @@ def decode(bytes buffer) -> PointCloud:
         buffer: Encoded draco bytes
 
     Returns:
-        PointCloud with positions(Nx3), scales(Nx1), rotations(Nx4), 
+        PointCloud with positions(Nx3), scales(Nx1), rotations(Nx2), 
         opacities(Nx1), features_dc(Nx1), features_rest(Nx9)
     """
     obj = dracoreduced3dgs.decode_point_cloud(buffer, len(buffer))
@@ -96,7 +96,7 @@ def decode(bytes buffer) -> PointCloud:
     return PointCloud(
         np.asarray(obj.positions).reshape(n, 3),
         np.asarray(obj.scales).reshape(n, 1),
-        np.asarray(obj.rotations).reshape(n, 4),
+        np.asarray(obj.rotations).reshape(n, 2),
         np.asarray(obj.opacities).reshape(n, 1),
         np.asarray(obj.features_dc).reshape(n, 1),
         np.asarray(obj.features_rest).reshape(n, 9),
