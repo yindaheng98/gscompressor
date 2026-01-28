@@ -3,7 +3,7 @@ import os
 import shutil
 from gaussian_splatting import GaussianModel
 from reduced_3dgs.quantization import ExcludeZeroSHQuantizer as VectorQuantizer
-from gscompressor import VectorQuantizationCompressor
+from gscompressor.quantization import VectorQuantizationCompressor, VectorQuantizationDecompressor
 
 
 def compress(
@@ -49,10 +49,10 @@ def decompress(
         decoder_executable: str,
 ):
     gaussians = GaussianModel(sh_degree)
-    compressor = VectorQuantizationCompressor(
+    decompressor = VectorQuantizationDecompressor(
         VectorQuantizer(),
         decoder_executable=decoder_executable)
-    compressor.load_compressed(gaussians, load_drc)
+    decompressor.load_compressed(gaussians, load_drc)
     gaussians.save_ply(save_ply)
 
 
