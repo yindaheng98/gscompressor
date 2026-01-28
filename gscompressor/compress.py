@@ -17,6 +17,7 @@ def compress(
         qopacity=30,
         qfeaturedc=30,
         qfeaturerest=30,
+        use_executable_backend=False,
 ):
     gaussians = GaussianModel(sh_degree)
     gaussians.load_ply(load_ply)
@@ -29,6 +30,7 @@ def compress(
         qopacity=qopacity,
         qfeaturedc=qfeaturedc,
         qfeaturerest=qfeaturerest,
+        use_executable_backend=use_executable_backend,
     )
     compressor.save_compressed(gaussians, save_drc)
 
@@ -38,10 +40,13 @@ def decompress(
         load_drc: str,
         save_ply: str,
         decoder_executable: str,
+        use_executable_backend=False,
 ):
     gaussians = GaussianModel(sh_degree)
     decompressor = Decompressor(
-        decoder_executable=decoder_executable)
+        decoder_executable=decoder_executable,
+        use_executable_backend=use_executable_backend,
+    )
     decompressor.load_compressed(gaussians, load_drc)
     gaussians.save_ply(save_ply)
 
@@ -64,8 +69,10 @@ if __name__ == "__main__":
     parser.add_argument("--qopacity", default=30, type=int)
     parser.add_argument("--qfeaturedc", default=30, type=int)
     parser.add_argument("--qfeaturerest", default=30, type=int)
+    parser.add_argument("--use_executable_backend", action="store_true")
     parser = subparsers.add_parser("decompress")
     parser.add_argument("--decoder_executable", default=None, type=str)
+    parser.add_argument("--use_executable_backend", action="store_true")
     args = rootparser.parse_args()
     save_drc = os.path.join(args.destination, "point_cloud", "iteration_" + str(args.iteration), "point_cloud.drc")
     with torch.no_grad():
@@ -82,7 +89,8 @@ if __name__ == "__main__":
                     qrotation=args.qrotation,
                     qopacity=args.qopacity,
                     qfeaturedc=args.qfeaturedc,
-                    qfeaturerest=args.qfeaturerest
+                    qfeaturerest=args.qfeaturerest,
+                    use_executable_backend=args.use_executable_backend,
                 )
                 # Save the compressed model
             case "decompress":
@@ -90,7 +98,8 @@ if __name__ == "__main__":
                     sh_degree=args.sh_degree,
                     load_drc=save_drc,
                     save_ply=os.path.join(args.destination, "point_cloud", "iteration_" + str(args.iteration), "point_cloud.ply"),
-                    decoder_executable=args.decoder_executable
+                    decoder_executable=args.decoder_executable,
+                    use_executable_backend=args.use_executable_backend,
                 )
                 shutil.copy2(os.path.join(args.source, "cfg_args"), os.path.join(args.destination, "cfg_args"))
                 shutil.copy2(os.path.join(args.source, "cameras.json"), os.path.join(args.destination, "cameras.json"))
