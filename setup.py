@@ -78,7 +78,7 @@ packages = ['gscompressor'] + ["gscompressor." + package for package in find_pac
 
 setup(
     name="gscompressor",
-    version='1.1.2',
+    version='1.2.0',
     author='yindaheng98',
     author_email='yindaheng98@gmail.com',
     url='https://github.com/yindaheng98/gscompressor',

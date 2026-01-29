@@ -67,12 +67,14 @@ class Compressor:
         # As a result, the compressed output from this method will differ from the executable backend.
 
         # Extract model attributes
+        # IMPORTANT: Use the same data layout as PLY format (transpose+flatten) for cross-compatibility
+        # with the executable backend. Direct reshape would produce different data ordering.
         positions = model._xyz.detach().cpu().numpy()  # (N, 3)
         scales = model._scaling.detach().cpu().numpy()  # (N, 3)
         rotations = model._rotation.detach().cpu().numpy()  # (N, 4)
         opacities = model._opacity.detach().cpu().numpy()  # (N, 1)
-        features_dc = model._features_dc.detach().cpu().numpy().reshape(-1, 3)  # (N, 1, 3) -> (N, 3)
-        features_rest = model._features_rest.detach().cpu().numpy().reshape(-1, 45)  # (N, 15, 3) -> (N, 45)
+        features_dc = model._features_dc.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()  # (N, 1, 3) -> (N, 3)
+        features_rest = model._features_rest.detach().transpose(1, 2).flatten(start_dim=1).contiguous().cpu().numpy()  # (N, 15, 3) -> (N, 45)
 
         # Encode
         encoded = draco3dgs.encode(
@@ -123,10 +125,14 @@ class Decompressor:
         pc = draco3dgs.decode(buffer)
 
         # Set model attributes
+        # IMPORTANT: Use the same data layout as PLY format for cross-compatibility.
+        # Features are stored in PLY as (N, num_channels, num_sh_coeffs) and then transposed.
+        # - features_dc: (N, 3) -> reshape to (N, 3, 1) -> transpose to (N, 1, 3)
+        # - features_rest: (N, 45) -> reshape to (N, 3, 15) -> transpose to (N, 15, 3)
         device = model._xyz.device
-        model._xyz = torch.nn.Parameter(torch.tensor(pc.positions, dtype=torch.float32, device=device))
-        model._scaling = torch.nn.Parameter(torch.tensor(pc.scales, dtype=torch.float32, device=device))
-        model._rotation = torch.nn.Parameter(torch.tensor(pc.rotations, dtype=torch.float32, device=device))
-        model._opacity = torch.nn.Parameter(torch.tensor(pc.opacities, dtype=torch.float32, device=device))
-        model._features_dc = torch.nn.Parameter(torch.tensor(pc.features_dc.reshape(-1, 1, 3), dtype=torch.float32, device=device))
-        model._features_rest = torch.nn.Parameter(torch.tensor(pc.features_rest.reshape(-1, 15, 3), dtype=torch.float32, device=device))
+        model._xyz = torch.nn.Parameter(torch.tensor(pc.positions, dtype=torch.float, device=device).requires_grad_(True))
+        model._scaling = torch.nn.Parameter(torch.tensor(pc.scales, dtype=torch.float, device=device).requires_grad_(True))
+        model._rotation = torch.nn.Parameter(torch.tensor(pc.rotations, dtype=torch.float, device=device).requires_grad_(True))
+        model._opacity = torch.nn.Parameter(torch.tensor(pc.opacities, dtype=torch.float, device=device).requires_grad_(True))
+        model._features_dc = torch.nn.Parameter(torch.tensor(pc.features_dc.reshape(-1, 3, 1), dtype=torch.float, device=device).transpose(1, 2).contiguous().requires_grad_(True))
+        model._features_rest = torch.nn.Parameter(torch.tensor(pc.features_rest.reshape(-1, 3, 15), dtype=torch.float, device=device).transpose(1, 2).contiguous().requires_grad_(True))
