@@ -51,14 +51,9 @@ class VectorQuantizationCompressor:
         ids_dict, codebook_dict = self.quantizer.quantize(model, update_codebook=False)
         dtype_full = self.quantizer.ply_dtype(model.max_sh_degree)
         data_full = self.quantizer.ply_data(model, ids_dict)
-        dtype_rot = max([dtype for name, dtype in dtype_full if 'rot_' in name])
         for i in range(len(dtype_full)):
-            if 'rot_' in dtype_full[i][0]:
-                dtype_full[i] = (dtype_full[i][0], dtype_rot)
-        dtype_f_rest = max([dtype for name, dtype in dtype_full if 'f_rest_' in name])
-        for i in range(len(dtype_full)):
-            if 'f_rest_' in dtype_full[i][0]:
-                dtype_full[i] = (dtype_full[i][0], dtype_f_rest)
+            if dtype_full[i][0] not in ['x', 'y', 'z', 'nx', 'ny', 'nz']:
+                dtype_full[i] = (dtype_full[i][0], 'i4')
 
         elements = np.rec.fromarrays([data.squeeze(-1) for data in data_full], dtype=dtype_full)
         el = PlyElement.describe(elements, 'vertex')

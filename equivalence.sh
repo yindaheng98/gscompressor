@@ -5,7 +5,7 @@ SOURCE_DIR="output/truck"
 ITERATION="30000"
 SH_DEGREE="3"
 TEMP_DIR="output/truck-gscompress"
-# BASE="python -m gscompressor.compress --sh_degree $SH_DEGREE -s $SOURCE_DIR -i $ITERATION compress"
+# BASE="python -m gscompressor.compress --sh_degree $SH_DEGREE -s $SOURCE_DIR -i $ITERATION"
 BASE="python -m gscompressor.quantize --sh_degree $SH_DEGREE -s $SOURCE_DIR -i $ITERATION"
 ENC_OPTS="--num_clusters_scaling=1024 --num_clusters_rotation_re=256 --num_clusters_rotation_im=1024 --num_clusters_opacity=256 --num_clusters_features_dc=512 --num_clusters_features_rest=256 --num_clusters_features_rest=128 --num_clusters_features_rest=64"
 
