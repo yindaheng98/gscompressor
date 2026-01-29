@@ -6,9 +6,6 @@ from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
 from Cython.Build import cythonize
 
-# 获取 setup.py 所在目录的绝对路径
-HERE = os.path.dirname(os.path.abspath(__file__))
-
 
 class NumpyImport:
     def __repr__(self):
@@ -82,7 +79,7 @@ packages = ['gscompressor'] + ["gscompressor." + package for package in find_pac
 
 setup(
     name="gscompressor",
-    version='1.2.0',
+    version='1.2.0.1',
     author='yindaheng98',
     author_email='yindaheng98@gmail.com',
     url='https://github.com/yindaheng98/gscompressor',
