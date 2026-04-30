@@ -52,6 +52,7 @@ VQARGS="
     --num_clusters_features_dc=8 \
     --num_clusters_features_rest 4 4 4"
 quantize_scales() {
+    quantize $1 $2 '' $3 bad
     quantize $1 $2 1x $3 bad
     quantize $1 $2 2x $3 bad
     quantize $1 $2 4x $3 bad
@@ -68,6 +69,7 @@ VQARGS="
     --num_clusters_features_dc=32764 \
     --num_clusters_features_rest 32764 32764 32764"
 quantize_scales() {
+    quantize $1 $2 '' $3 good
     quantize $1 $2 1x $3 good
     quantize $1 $2 2x $3 good
     quantize $1 $2 4x $3 good
