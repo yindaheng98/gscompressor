@@ -85,7 +85,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_clusters_opacity", type=int, default=None)
     parser.add_argument("--num_clusters_scaling", type=int, default=None)
     parser.add_argument("--num_clusters_features_dc", type=int, default=None)
-    parser.add_argument("--num_clusters_features_rest", action="append", type=int, default=None)
+    parser.add_argument("--num_clusters_features_rest", nargs="+", type=int, default=[])
     parser.add_argument("--use_executable_backend", action="store_true")
     parser = subparsers.add_parser("decompress")
     parser.add_argument("--decoder_executable", default=None, type=str)
@@ -117,7 +117,7 @@ if __name__ == "__main__":
                     num_clusters_opacity=args.num_clusters_opacity,
                     num_clusters_scaling=args.num_clusters_scaling,
                     num_clusters_features_dc=args.num_clusters_features_dc,
-                    num_clusters_features_rest=args.num_clusters_features_rest or []
+                    num_clusters_features_rest=args.num_clusters_features_rest
                 )
                 # Save the compressed model
             case "decompress":
