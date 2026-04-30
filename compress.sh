@@ -1,4 +1,7 @@
 #!/bin/bash
+RAW=truck
+ITER=30000
+
 QP=30
 QSCALE=16
 QROTATION=16
@@ -29,7 +32,9 @@ compress_scales() {
     compress $1 $2 4x $3
     compress $1 $2 8x $3
 }
-compress_scales truck truck-gscompress 30000
+compress_scales ${RAW} ${RAW}-gscompress ${ITER}
+
+
 quantize() {
     python -m gscompressor.quantize \
         -s output/$1/$3 -d output/$2/$3-vq-$5 -i $4 \
@@ -58,7 +63,7 @@ quantize_scales() {
     quantize $1 $2 4x $3 bad
     quantize $1 $2 8x $3 bad
 }
-quantize_scales truck truck-gscompress 30000
+quantize_scales ${RAW} ${RAW}-gscompress ${ITER}
 
 # 100 bit VQ
 VQARGS="
@@ -75,4 +80,4 @@ quantize_scales() {
     quantize $1 $2 4x $3 good
     quantize $1 $2 8x $3 good
 }
-quantize_scales truck truck-gscompress 30000
+quantize_scales ${RAW} ${RAW}-gscompress ${ITER}
