@@ -1,5 +1,10 @@
 # gscompressor: compress 3DGS scenes by Draco
 
+[![PyPI version](https://img.shields.io/pypi/v/gscompressor.svg?logo=pypi)](https://pypi.org/project/gscompressor/)
+[![Downloads](https://api.pepy.tech/personalized-badge/gscompressor?period=month&left_color=grey&right_color=brightgreen&left_text=monthly%20downloads)](https://pepy.tech/project/gscompressor)
+[![Total downloads](https://api.pepy.tech/personalized-badge/gscompressor?period=total&left_color=grey&right_color=brightgreen&left_text=total%20downloads)](https://pepy.tech/project/gscompressor)
+[![CI](https://github.com/yindaheng98/gscompressor/actions/workflows/build-release-win-macos.yml/badge.svg)](https://github.com/yindaheng98/gscompressor/actions/workflows/ci.yml)
+
 ## Install (PyPI)
 
 ```shell

@@ -1,4 +1,4 @@
-name: Python packages
+name: Python package for Windows and macOS
 
 on:
   push:
